@@ -12,6 +12,7 @@ CREATE TABLE "Author_Table" (
 	PRIMARY KEY("AuthorID" AUTOINCREMENT)
 );
 
+
 -- Create Book Table with autoincrement primary key book id and a foreign key author id
 CREATE TABLE "Book_Table" (
 	"BookID"	INTEGER NOT NULL,
@@ -74,7 +75,15 @@ VALUES
 ('Liam', 'Parker', 'Canada'),
 ('Emily', 'Murphy', 'USA');
 
-
+-- create index for Author Table
+-- Author ID should be unique and is the primary key so adding an unique index
+CREATE UNIQUE INDEX "AuthorID_Index" ON "Author_Table" (
+	"AuthorID"	ASC
+)
+-- Nationality likely to be grouped/orded by and used in where clauses so adding an index but will not be unique. 
+CREATE INDEX "Author_Index" ON "Author_Table" (
+	"AuthorNationality"
+)
 
 
 -- Add data to Book Table
@@ -112,7 +121,17 @@ INSERT INTO Book_table (BookTitle, BookAuthor, Genre) VALUES
 ('Participate', '22', 'Society'),
 ('Positive figures', '3', 'Fiction');
 
+-- create index for Book Table
+-- Book ID should be unique and is a primary key so adding an index
+CREATE UNIQUE INDEX "BookID_Index" ON "Book_Table" (
+	"BookID"	ASC
+)
 
+-- Book Author and Genre are likely to be used in group/order by joins and where clauses so adding an index. Book author is also a foreign key
+CREATE INDEX "BookTable_Index" ON "Book_Table" (
+	"BookAuthor",
+	"Genre"
+)
 
 -- add data to Client Table
 
@@ -197,6 +216,19 @@ INSERT INTO Client_Table (ClientFirstName, ClientLastName, ClientDob, Occupation
 ('Christine', 'Lambert', '1973', 'School Teacher'),
 ('Alysha', 'Lambert', '2007', 'Student'),
 ('Maia', 'Grant', '1984', 'School Teacher');
+
+-- Index for table Client_Table
+-- Client ID is unique and a primary key so using a unique index
+CREATE UNIQUE INDEX "ClientID_Index" ON "Client_Table" (
+	"ClientID"	ASC
+)
+
+-- client doB and occupation likely to be used for searching and ordering so using an index
+CREATE INDEX "ClientTable_Index" ON "Client_Table" (
+	"ClientDoB",
+	"Occupation"
+)
+
 
 
 -- Add data to Borrower_Table
@@ -503,11 +535,112 @@ INSERT INTO Borrower_Table (ClientID, BookID, BorrowDate) VALUES
 (26, 23, '2016-03-01'),
 (49, 23, '2016-10-25');
 
+-- Index for table Borrower_Table
+-- Index for column BorrowerID should be unique and is a primary key so creating a unique index
+CREATE UNIQUE INDEX "BorrowerID_Index" ON "Borrower_Table" (
+	"BorrowID"
+)
+
+-- ClientID, BookID are both foreign keys so creating an index for each in addtion adding borrow date as it will likely be grouped by/ordered by. 
+CREATE INDEX "BorrowerTable_Index" ON "Borrower_Table" (
+	"ClientID",
+	"BookID",
+	"BorrowDate"
+)
+
+
+
 -- Part C: Queries
 
 -- 1. Display all contents of the Clients table
 SELECT *
 FROM Client_Table;
+
+-- Output
+"ClientID ClientFirstName ClientLastName ClientDob ClientOccupation
+1	Kaiden	Hill	2006	Student
+2	Alina	Morton	2010	Student
+3	Fania	Brooks	1983	Food Scientist
+4	Courtney	Jensen	2006	Student
+5	Brittany	Hill	1983	Firefightr
+6	Max	Rogers	2005	Student
+7	Margaret	McCarthy	1981	School Psychologist
+8	Julie	McCarthy	1973	Professor
+9	Ken	McCarthy	1974	Securities Clerk
+10	Britany	O'Quinn	1984	Violinist
+11	Conner	Gardner	1998	Licensed Massage Therapist
+12	Mya	Austin	1960	Parquet Floor Layer
+13	Thierry	Rogers	2004	Student
+14	Eloise	Rogers	1984	Computer Security Manager
+15	Gerard	Jackson	1979	Oil Exploration Engineer
+16	Randy	Day	1986	Aircraft Electrician
+17	Jodie	Page	1990	Manufacturing Director
+18	Coral	Rice	1996	Window Washer
+19	Ayman	Austin	2002	Student
+20	Jaxson	Austin	1999	Repair Worker
+21	Joel	Austin	1973	Police Officer
+22	Alina	Austin	2010	Student
+23	Elin	Austin	1962	Payroll Clerk
+24	Ophelia	Wolf	2004	Student
+25	Eliot	McGuire	1967	Dentist
+26	Peter	McKinney	1968	Professor
+27	Annabella	Henry	1974	Nurse
+28	Anastasia	Baker	2001	Student
+29	Tyler	Baker	1984	Police Officer
+30	Lilian	Ross	1983	Insurance Agent
+31	Thierry	Arnold	1975	Bus Driver
+32	Angelina	Rowe	1979	Firefighter
+33	Marcia	Rowe	1974	Health Educator
+34	Martin	Rowe	1976	Ship Engineer
+35	Adeline	Rowe	2005	Student
+36	Colette	Rowe	1963	Professor
+37	Diane	Clark	1975	Payroll Clerk
+38	Caroline	Clark	1960	Dentist
+39	Dalton	Clayton	1982	Police Officer
+40	Steve	Clayton	1990	Bus Driver
+41	Melanie	Clayton	1987	Computer Engineer
+42	Alana	Wilson	2007	Student
+43	Carson	Byrne	1995	Food Scientist
+44	Conrad	Byrne	2007	Student
+45	Ryan	Porter	2008	Student
+46	Elin	Porter	1978	Computer Programmer
+47	Tyler	Harvey	2007	Student
+48	Arya	Harvey	2008	Student
+49	Serena	Harvey	1978	School Teacher
+50	Lilly	Franklin	1976	Doctor
+51	Mai	Franklin	1994	Dentist
+52	John	Franklin	1999	Firefighter
+53	Judy	Franklin	1995	Firefighter
+54	Katy	Lloyd	1992	School Teacher
+55	Tamara	Allen	1963	Ship Engineer
+56	Maxim	Lyons	1985	Police Officer
+57	Allan	Lyons	1983	Computer Engineer
+58	Marc	Harris	1980	School Teacher
+59	Elin	Young	2009	Student
+60	Diana	Young	2008	Student
+61	Diane	Young	2006	Student
+62	Alana	Bird	2003	Student
+63	Anna	Becker	1979	Security Agent
+64	Katie	Grant	1977	Manager
+65	Joan	Grant	2010	Student
+66	Bryan	Bell	2001	Student
+67	Belle	Miller	1970	Professor
+68	Peggy	Stevens	1990	Bus Driver
+69	Steve	Williamson	1975	HR Clerk
+70	Tyler	Williamson	1999	Doctor
+71	Izabelle	Williamson	1990	Systems Analyst
+72	Annabel	Williamson	1960	Cashier
+73	Mohamed	Waters	1966	Insurance Agent
+74	Marion	Newman	1970	Computer Programmer
+75	Ada	Williams	1986	Computer Programmer
+76	Sean	Scott	1983	Bus Driver
+77	Farrah	Scott	1974	Ship Engineer
+78	Christine	Lambert	1973	School Teacher
+79	Alysha	Lambert	2007	Student
+80	Maia	Grant	1984	School Teacher"
+
+-- output
+
 
 -- 2. First names, last names, ages and occupations of all clients
 -- age as an integer of current year minus dob. Note that this calculation is slightly different for SQLite than MySQL
@@ -515,11 +648,108 @@ FROM Client_Table;
 SELECT ClientFirstName, ClientLastName, CAST((strftime('%Y', 'now') - ClientDob) as INTEGER) as age, Occupation
 FROM Client_Table;
 
+-- output
+"ClientFirstName ClientLastName age Occupation
+Kaiden	Hill	18	Student
+Alina	Morton	14	Student
+Fania	Brooks	41	Food Scientist
+Courtney	Jensen	18	Student
+Brittany	Hill	41	Firefighter
+Max	Rogers	19	Student
+Margaret	McCarthy	43	School Psychologist
+Julie	McCarthy	51	Professor
+Ken	McCarthy	50	Securities Clerk
+Britany	O'Quinn	40	Violinist
+Conner	Gardner	26	Licensed Massage Therapist
+Mya	Austin	64	Parquet Floor Layer
+Thierry	Rogers	20	Student
+Eloise	Rogers	40	Computer Security Manager
+Gerard	Jackson	45	Oil Exploration Engineer
+Randy	Day	38	Aircraft Electrician
+Jodie	Page	34	Manufacturing Director
+Coral	Rice	28	Window Washer
+Ayman	Austin	22	Student
+Jaxson	Austin	25	Repair Worker
+Joel	Austin	51	Police Officer
+Alina	Austin	14	Student
+Elin	Austin	62	Payroll Clerk
+Ophelia	Wolf	20	Student
+Eliot	McGuire	57	Dentist
+Peter	McKinney	56	Professor
+Annabella	Henry	50	Nurse
+Anastasia	Baker	23	Student
+Tyler	Baker	40	Police Officer
+Lilian	Ross	41	Insurance Agent
+Thierry	Arnold	49	Bus Driver
+Angelina	Rowe	45	Firefighter
+Marcia	Rowe	50	Health Educator
+Martin	Rowe	48	Ship Engineer
+Adeline	Rowe	19	Student
+Colette	Rowe	61	Professor
+Diane	Clark	49	Payroll Clerk
+Caroline	Clark	64	Dentist
+Dalton	Clayton	42	Police Officer
+Steve	Clayton	34	Bus Driver
+Melanie	Clayton	37	Computer Engineer
+Alana	Wilson	17	Student
+Carson	Byrne	29	Food Scientist
+Conrad	Byrne	17	Student
+Ryan	Porter	16	Student
+Elin	Porter	46	Computer Programmer
+Tyler	Harvey	17	Student
+Arya	Harvey	16	Student
+Serena	Harvey	46	School Teacher
+Lilly	Franklin	48	Doctor
+Mai	Franklin	30	Dentist
+John	Franklin	25	Firefighter
+Judy	Franklin	29	Firefighter
+Katy	Lloyd	32	School Teacher
+Tamara	Allen	61	Ship Engineer
+Maxim	Lyons	39	Police Officer
+Allan	Lyons	41	Computer Engineer
+Marc	Harris	44	School Teacher
+Elin	Young	15	Student
+Diana	Young	16	Student
+Diane	Young	18	Student
+Alana	Bird	21	Student
+Anna	Becker	45	Security Agent
+Katie	Grant	47	Manager
+Joan	Grant	14	Student
+Bryan	Bell	23	Student
+Belle	Miller	54	Professor
+Peggy	Stevens	34	Bus Driver
+Steve	Williamson	49	HR Clerk
+Tyler	Williamson	25	Doctor
+Izabelle	Williamson	34	Systems Analyst
+Annabel	Williamson	64	Cashier
+Mohamed	Waters	58	Insurance Agent
+Marion	Newman	54	Computer Programmer
+Ada	Williams	38	Computer Programmer
+Sean	Scott	41	Bus Driver
+Farrah	Scott	50	Ship Engineer
+Christine	Lambert	51	School Teacher
+Alysha	Lambert	17	Student
+Maia	Grant	40	School Teacher"
+
+
+
 -- 3.First and last names of clients that borrowed books in March 2018
 SELECT Client_Table.ClientFirstName, Client_Table.ClientLastName
 FROM Client_Table
 JOIN Borrower_Table ON Client_Table.ClientID = Borrower_Table.ClientID
 WHERE Borrower_Table.BorrowDate BETWEEN '2018-03-01' AND '2018-03-31';
+
+-- output
+"ClientFirstName	ClientLastName
+Maia	Grant
+Marcia	Rowe
+Alysha	Lambert
+Tyler	Baker
+Katy	Lloyd
+Angelina	Rowe
+Gerard	Jackson
+Carson	Byrne"
+
 
 -- 4. First and last names of the top 5 authors clients borrowed in 2017
 SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName
@@ -527,19 +757,49 @@ FROM Author_Table
 JOIN Book_Table ON Author_Table.AuthorID = Book_Table.BookAuthor
 JOIN Borrower_Table ON Book_Table.BookID = Borrower_Table.BookID
 WHERE Borrower_Table.BorrowDate BETWEEN '2017-01-01' AND '2017-12-31'
-GROUP BY Author_Table.AuthorFirstName
+GROUP BY Author_Table.AuthorID
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 5;
 
+-- output
+"AuthorFirstName	AuthorLastName
+Logan	Moore
+Elena	Martin
+Sofia	Smith
+Maria	Brown
+Helena	Adams"
+
 -- 5. Nationalities of the least 5 authors that clients borrowed during the years 2015-2017
-SELECT Author_Table.AuthorNationality as most_popular_author_nationality
+SELECT Author_Table.AuthorNationality as least_popular_authors_nationality
 FROM Author_Table
 JOIN Book_Table ON Author_Table.AuthorID = Book_Table.BookAuthor
 JOIN Borrower_Table ON Book_Table.BookID = Borrower_Table.BookID
 WHERE Borrower_Table.BorrowDate BETWEEN '2015-01-01' AND '2017-12-31'
-GROUP BY Author_Table.AuthorNationality
+GROUP BY Author_Table.AuthorID, Author_Table.AuthorNationality
 ORDER BY COUNT(Borrower_Table.BookID) ASC
 LIMIT 5;
+
+
+
+-- note if you want to see the full output, of which authors are the least popular in 2015-2017 in ascending order this should work
+-- SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName, Author_Table.AuthorNationality as most_popular_author_nationality, COUNT(Borrower_Table.BookID) as borrow_count
+-- FROM Author_Table
+-- JOIN Book_Table ON Author_Table.AuthorID = Book_Table.BookAuthor
+-- JOIN Borrower_Table ON Book_Table.BookID = Borrower_Table.BookID
+-- WHERE Borrower_Table.BorrowDate BETWEEN '2015-01-01' AND '2017-12-31'
+-- GROUP BY Author_Table.AuthorID, Author_Table.AuthorNationality
+-- ORDER BY borrow_count ASC
+
+
+-- output
+"least_popular_authors_nationality
+Spain
+Canada
+USA
+USA
+Great Britain"
+
+
 
 -- 6. The book that was most borrowed during the years 2015-2017
 SELECT Book_Table.BookTitle
@@ -549,6 +809,10 @@ WHERE Borrower_Table.BorrowDate BETWEEN '2015-01-01' AND '2017-12-31'
 GROUP BY Book_Table.BookTitle
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 1;
+
+-- output
+"BookTitle
+The perfect match"
 
 -- 7. Top borrowed genres for client born in years 1970-1980
 SELECT Book_Table.Genre
@@ -560,6 +824,21 @@ GROUP BY Book_Table.Genre
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 10;
 
+-- output
+"Genre
+Science
+Fiction
+Well being
+Humor
+Society
+Literature
+Law
+History
+Children
+well being"
+
+
+
 -- 8. Top 5 occupations that borrowed the most in 2016
 SELECT Client_Table.Occupation as Top_Borrowers_Occupation
 FROM Client_Table
@@ -569,33 +848,103 @@ GROUP BY Client_Table.Occupation
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 5;
 
+-- output
+
+"Top_Borrowers_Occupation
+Student
+Bus Driver
+Dentist
+Computer Programmer
+School Teacher"
+
+
 -- 9. The average number of borrowed books by job title
-SELECT AVG(number_of_borrowed_books) as average_number_of_borrowed_books
+SELECT Occupation, AVG(number_of_borrowed_books) as average_number_of_borrowed_books
 FROM
 (SELECT Client_Table.Occupation, COUNT(Borrower_Table.BookID) as number_of_borrowed_books
 FROM Client_Table
 JOIN Borrower_Table ON Client_Table.ClientID = Borrower_Table.ClientID
-GROUP BY Client_Table.Occupation) as average_number_of_borrowed_books;
+GROUP BY Client_Table.ClientID, Client_Table.Occupation) as borrows_per_occupation
+GROUP BY Occupation
+ORDER BY average_number_of_borrowed_books DESC;
+
+"Occupation	average_number_of_borrowed_books
+Nurse	7.0
+Computer Security Manager	6.0
+Dentist	5.66666666666667
+Computer Programmer	5.66666666666667
+Oil Exploration Engineer	5.0
+Manufacturing Director	5.0
+Food Scientist	5.0
+Cashier	5.0
+Police Officer	4.5
+Student	4.42105263157895
+Violinist	4.0
+Systems Analyst	4.0
+Ship Engineer	4.0
+Insurance Agent	4.0
+HR Clerk	4.0
+Doctor	4.0
+Bus Driver	4.0
+School Teacher	3.6
+Professor	3.5
+Firefighter	3.25
+Repair Worker	3.0
+Payroll Clerk	3.0
+Manager	3.0
+Computer Engineer	3.0
+Window Washer	2.0
+Security Agent	2.0
+Securities Clerk	2.0
+School Psychologist	2.0
+Parquet Floor Layer	2.0
+Licensed Massage Therapist	2.0
+Health Educator	2.0
+Aircraft Electrician	2.0"
 
 
 
 -- 10. Create a VIEW and display the titles that were borrowed by at least 20% of clients.
+CREATE VIEW Borrowed_Books_View as
 SELECT Book_Table.BookTitle, COUNT(Borrower_Table.BookID) as number_of_times_borrowed
 FROM Book_Table
 JOIN Borrower_Table ON Book_Table.BookID = Borrower_Table.BookID
 GROUP BY Book_Table.BookTitle
-HAVING COUNT(Borrower_Table.BookID) >= 0.2 * (SELECT COUNT(ClientID) FROM Client_Table);
+HAVING COUNT(Borrower_Table.BookID) >= 0.2 * (SELECT COUNT(ClientID) FROM Client_Table); -- this creates the view. 
 
+-- this will dispaly the output of the view. 
+select * from Borrowed_Books_View
 
+-- output
+"BookTitle	number_of_times_borrowed
+Electrical transformers	18"
 
 
 -- 11. The top month of borrows in 2017
-SELECT strftime('%m', Borrower_Table.BorrowDate) as Most_Popular_Borrow_Month
+SELECT 
+    CASE strftime('%m', Borrower_Table.BorrowDate)
+        WHEN '01' THEN 'January'
+        WHEN '02' THEN 'February'
+        WHEN '03' THEN 'March'
+        WHEN '04' THEN 'April'
+        WHEN '05' THEN 'May'
+        WHEN '06' THEN 'June'
+        WHEN '07' THEN 'July'
+        WHEN '08' THEN 'August'
+        WHEN '09' THEN 'September'
+        WHEN '10' THEN 'October'
+        WHEN '11' THEN 'November'
+        WHEN '12' THEN 'December'
+    END as Most_Popular_Borrow_Month
 FROM Borrower_Table
 WHERE strftime('%Y', Borrower_Table.BorrowDate) = '2017'
 GROUP BY strftime('%m', Borrower_Table.BorrowDate)
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 1;
+
+-- output
+"Most_Popular_Borrow_Month
+October"
 
 -- 12. Average number of borrows by age group
 -- this query will show the average number of borrows by people of a particular age. And output the average number of borrowed books by age. 
@@ -605,8 +954,50 @@ FROM
 (SELECT CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER) AS age_group, COUNT(Borrower_Table.BookID) as number_of_borrows
 FROM Client_Table
 JOIN Borrower_Table ON Client_Table.ClientID = Borrower_Table.ClientID
-GROUP BY age_group) as borrows_per_age
+GROUP BY Client_Table.ClientID) as borrows_per_age
 GROUP BY age_group;
+
+-- output
+"age_group	average_number_of_borrows
+14	2.33333333333333
+16	6.0
+17	5.0
+18	5.5
+19	4.5
+20	3.0
+21	5.0
+22	2.0
+23	4.5
+25	3.66666666666667
+26	2.0
+28	2.0
+29	4.5
+30	10.0
+32	3.0
+34	5.5
+37	2.0
+38	3.0
+39	4.0
+40	5.5
+41	3.75
+42	3.0
+43	2.0
+44	1.0
+45	4.33333333333333
+46	5.5
+47	3.0
+48	3.5
+49	2.66666666666667
+50	3.25
+51	3.66666666666667
+54	4.5
+56	4.0
+57	3.0
+58	1.0
+61	5.0
+62	3.0
+64	3.66666666666667"
+
 
 
 
@@ -620,10 +1011,29 @@ WHERE age = (SELECT MIN(CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER)) FR
    OR age = (SELECT MAX(CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER)) FROM Client_Table)
 ORDER BY age DESC;
 
+-- output
+"ClientFirstName	ClientLastName	age
+Mya	Austin	64
+Caroline	Clark	64
+Annabel	Williamson	64
+Alina	Morton	14
+Alina	Austin	14
+Joan	Grant	14"
+
 
 -- 14. First and last names of authors that wrote books in more than one genre:
 SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName, COUNT(Book_table.Genre) as number_of_genres_written
 FROM Author_Table
 JOIN Book_Table ON Author_Table.AuthorID = Book_Table.BookAuthor
-GROUP BY Author_Table.AuthorFirstName
+GROUP BY Author_Table.AuthorID,Author_Table.AuthorFirstName, Author_Table.AuthorLastName
 HAVING COUNT(Book_Table.Genre) > 1
+ORDER BY number_of_genres_written DESC;
+
+-- output
+"AuthorFirstName	AuthorLastName	number_of_genres_written
+Sofia	Smith	4
+Helena	Adams	3
+Maria	Brown	2
+Elena	Martin	2
+Oliver	Martin	2
+Liam	Parker	2"
