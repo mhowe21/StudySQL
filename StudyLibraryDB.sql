@@ -1,4 +1,4 @@
--- For the SQL flavor I used sqlite as the database could be set up locally and is portable. Some commands might differ from other DBMSs.
+-- For the SQL flavor I used sqlite as the database could be set up locally is portable, and does not require a server configuration.  Some commands might differ from other DBMSs, however they should be similar.
 
 -- Part A: Create Tables
 
@@ -569,8 +569,7 @@ GROUP BY Client_Table.Occupation
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 5;
 
--- 9. The average number of borrowed books by job title *
--- subquery to find the average number of borrowed books by job title* 
+-- 9. The average number of borrowed books by job title
 SELECT AVG(number_of_borrowed_books) as average_number_of_borrowed_books
 FROM
 (SELECT Client_Table.Occupation, COUNT(Borrower_Table.BookID) as number_of_borrowed_books
@@ -580,15 +579,13 @@ GROUP BY Client_Table.Occupation) as average_number_of_borrowed_books;
 
 
 
--- 10. Create a VIEW and display the titles that were borrowed by at least 20% of clients. 
--- this view should show the number of books that were borrowed by at least 20% of clients
-
-CREATE VIEW number_of_borrowed_books AS
-SELECT Book_Table.BookTitle, COUNT(Borrower_Table.BookID) as number_of_borrowed_books
+-- 10. Create a VIEW and display the titles that were borrowed by at least 20% of clients.
+SELECT Book_Table.BookTitle, COUNT(Borrower_Table.BookID) as number_of_times_borrowed
 FROM Book_Table
 JOIN Borrower_Table ON Book_Table.BookID = Borrower_Table.BookID
 GROUP BY Book_Table.BookTitle
-HAVING COUNT(Borrower_Table.BookID) >= 0.2 * (SELECT COUNT(Borrower_Table.BookID) FROM Borrower_Table);
+HAVING COUNT(Borrower_Table.BookID) >= 0.2 * (SELECT COUNT(ClientID) FROM Client_Table);
+
 
 
 
@@ -600,15 +597,18 @@ GROUP BY strftime('%m', Borrower_Table.BorrowDate)
 ORDER BY COUNT(Borrower_Table.BookID) DESC
 LIMIT 1;
 
--- 12. Average number of borrows by age group *
--- subquery to find the average number of borrows by age group
+-- 12. Average number of borrows by age group
+-- this query will show the average number of borrows by people of a particular age. And output the average number of borrowed books by age. 
 -- Note that this query will be slightly diffrent from what it would be in MYSQL.
-SELECT AVG(number_of_borrows) as average_number_of_borrows
+SELECT age_group, AVG(number_of_borrows) as average_number_of_borrows
 FROM
 (SELECT CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER) AS age_group, COUNT(Borrower_Table.BookID) as number_of_borrows
 FROM Client_Table
 JOIN Borrower_Table ON Client_Table.ClientID = Borrower_Table.ClientID
-GROUP BY age_group) as average_number_of_borrows;
+GROUP BY age_group) as borrows_per_age
+GROUP BY age_group;
+
+
 
 -- 13. The oldest and the youngest clients of the library
 -- subquery to find the oldest and youngest clients by subtracting the current year from the clients date of birth and then selecting the minimum and maximum.
@@ -619,16 +619,6 @@ FROM Client_Table
 WHERE age = (SELECT MIN(CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER)) FROM Client_Table)
    OR age = (SELECT MAX(CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER)) FROM Client_Table)
 ORDER BY age DESC;
-
--- This will give the oldest and youngest clients of the library and in the case that there is a tie it will show all of those ages. 
--- Note that this query will be slightly diffrent from what it would be in MYSQL.
-SELECT ClientFirstName, ClientLastName, CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER) AS age
-FROM Client_Table
-WHERE age = (SELECT MIN(CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER)) FROM Client_Table)
-   OR age = (SELECT MAX(CAST((strftime('%Y', 'now') - ClientDob) AS INTEGER)) FROM Client_Table)
-GROUP BY ClientFirstName, ClientLastName
-ORDER BY age DESC
-
 
 
 -- 14. First and last names of authors that wrote books in more than one genre:
