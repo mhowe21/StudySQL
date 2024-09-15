@@ -1029,7 +1029,7 @@ GROUP BY Author_Table.AuthorID,Author_Table.AuthorFirstName, Author_Table.Author
 HAVING number_of_genres_written > 1
 ORDER BY number_of_genres_written DESC;
 
--- we have one user who shows as two genres. However one of the tables in the Genra is a different case than the other. So we would likely want to use upper/lowe/decase to avoid that.
+-- we have one user who shows as two genres. However one of the tables in the Genra is a different case than the other but still the same genre. So we would likely want to use upper/lowe/decase to avoid that.
 -- Query 2 with lower conversion added.
 SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName, COUNT(DISTINCT LOWER(Book_Table.Genre)) as number_of_genres_written
 FROM Author_Table
