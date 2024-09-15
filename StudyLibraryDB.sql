@@ -1022,18 +1022,26 @@ Joan	Grant	14"
 
 
 -- 14. First and last names of authors that wrote books in more than one genre:
-SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName, COUNT(Book_table.Genre) as number_of_genres_written
+SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName, COUNT(DISTINCT Book_table.Genre) as number_of_genres_written -- use distinct to avoid counting the same genre more than once.
 FROM Author_Table
 JOIN Book_Table ON Author_Table.AuthorID = Book_Table.BookAuthor
 GROUP BY Author_Table.AuthorID,Author_Table.AuthorFirstName, Author_Table.AuthorLastName
-HAVING COUNT(Book_Table.Genre) > 1
+HAVING number_of_genres_written > 1
 ORDER BY number_of_genres_written DESC;
 
--- output
+-- we have one user who shows as two genres. However one of the tables in the Genra is a different case than the other. So we would likely want to use upper/lowe/decase to avoid that.
+-- Query 2 with lower conversion added.
+SELECT Author_Table.AuthorFirstName, Author_Table.AuthorLastName, COUNT(DISTINCT LOWER(Book_Table.Genre)) as number_of_genres_written
+FROM Author_Table
+JOIN Book_Table ON Author_Table.AuthorID = Book_Table.BookAuthor
+GROUP BY Author_Table.AuthorID, Author_Table.AuthorFirstName, Author_Table.AuthorLastName
+HAVING COUNT(DISTINCT LOWER(Book_Table.Genre)) > 1
+ORDER BY number_of_genres_written DESC;
+
+-- output 1 (none case sensitive)
 "AuthorFirstName	AuthorLastName	number_of_genres_written
-Sofia	Smith	4
-Helena	Adams	3
-Maria	Brown	2
-Elena	Martin	2
-Oliver	Martin	2
-Liam	Parker	2"
+Helena	Adams	2"
+
+-- output 2
+"AuthorFirstName	AuthorLastName	number_of_genres_written"
+
